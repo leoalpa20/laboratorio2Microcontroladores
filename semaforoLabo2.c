@@ -74,5 +74,64 @@ void temporizer()
     TCCR0A = 0x00;
     TCCR0B = 0x00;
     TCCR0B |= (1<<CS00) | (1<<CS02);
-    
+    sei();
+    TCNT0 = 0;
+    TIMSK |= (1<<TOIE0);
+}
+
+int main(void)
+{
+    setButtonsForLeds();
+    temporizer();
+    while(1)
+    {
+        switch(state)
+        {
+            case(BUTTON_IDLE):
+            PORTB = (1<<PB1) | (1<< PB4) | (1<<PB6);
+            if(button_active & (half_second_counter >= 20))
+            {
+                state = BLINK_CARS;
+                half_second_counter = 0;
+                counter = 0;
+            }
+            else
+            {
+                state = BUTTON_IDLE;
+            }
+            break;
+
+            case(BLINK_CARS):
+            if(half_second_counter == 6)
+            {
+                state = RED_LIGHT_CARS;
+                half_second_counter = 0;
+                counter = 0;
+            }
+            else
+            {
+                state = BLINK_CARS;
+            }
+            break;
+
+            case(RED_LIGHT_CARS):
+            PORTB = (0<<PB1) | (1<< PB2) | (1<<PB4) | (1<<PB6);
+            if(half_second_counter  = 1)
+            {
+                state = GREEN_LIGHT_PEDESTRIANS;
+                half_second_counter = 0;
+                counter = 0;
+            }
+            else
+            {
+                state = RED_LIGHT_CARS;
+            }
+            break;
+
+            case(GREEN_LIGHT_PEDESTRIANS):
+            PORTB =  (1<<PB2) | (0<<PB4) | (0<<PB6) | (1<<PB3) | (1<<PB5); 
+
+
+        }
+    }
 }
