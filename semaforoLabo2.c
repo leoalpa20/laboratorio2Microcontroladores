@@ -33,7 +33,7 @@ ISR (TIMER0_OVF_vect)
     if (counter == 30)
     {
         counter = 0; // Restart the counter
-        ++half_second_counter // Lets increase the half a second counter
+        ++half_second_counter; // Lets increase the half a second counter
 
         if (state == BLINK_CARS)
         {
@@ -57,7 +57,7 @@ ISR (TIMER0_OVF_vect)
 void setButtonsForLeds()
 {
     // Set PB( 1, 2, 3, 4, 5, 6) as outputs for the LEDS
-    DDRB |= (1<<DDB0) | (1<<DDB1) | (1<<DDB2) (1<<DDB3) | (1<<DDB4) | (1<<DDB5);
+    DDRB |= (1<<DDB0) | (1<<DDB1) | (1<<DDB2) | (1<<DDB3) | (1<<DDB4) | (1<<DDB5);
     // Enable external interrupts
     GIMSK |= (1<<INT1);
     // Configure to be active with the raising edge of the signal
@@ -116,7 +116,7 @@ int main(void)
 
             case(RED_LIGHT_CARS):
             PORTB = (0<<PB1) | (1<< PB2) | (1<<PB4) | (1<<PB6);
-            if(half_second_counter  = 1)
+            if((half_second_counter  = 1))
             {
                 state = GREEN_LIGHT_PEDESTRIANS;
                 half_second_counter = 0;
