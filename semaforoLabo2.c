@@ -130,8 +130,53 @@ int main(void)
 
             case(GREEN_LIGHT_PEDESTRIANS):
             PORTB =  (1<<PB2) | (0<<PB4) | (0<<PB6) | (1<<PB3) | (1<<PB5); 
+            if(half_second_counter == 20)
+            {
+                state = BLINK_PEDESTRIANS;
+                half_second_counter = 0;
+                counter = 0;
+
+            }
+            else
+            {
+                state = GREEN_LIGHT_PEDESTRIANS;
+            }
+            break;
+
+            case(BLINK_PEDESTRIANS):
+            if(half_second_counter == 6)
+            {
+                state = RED_LIGHT_PEDESTRIANS;
+                half_second_counter = 0;
+                counter = 0;
+
+            } 
+            else 
+            {
+                state = BLINK_PEDESTRIANS;
+            }
+            break;
+            
+            case(RED_LIGHT_PEDESTRIANS):
+            PORTB = (0<<PB1) | (1<<PB2) | (0<<PB3) | (0<<PB5) | (1<<PB4) | (1<<PB6);
+            if(half_second_counter == 1)
+            {
+                state = BUTTON_IDLE;
+                half_second_counter = 0;
+                counter = 0;
+                button_active = 0;
+            }
+            else
+            {
+                state = RED_LIGHT_PEDESTRIANS;
+            }
+            break;
+
+            default:
+            break;
 
 
         }
     }
 }
+
