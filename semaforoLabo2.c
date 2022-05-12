@@ -59,7 +59,7 @@ void setButtonsForLeds()
     // Set PB( 1, 2, 3, 4, 5, 6) as outputs for the LEDS
     DDRB |= (1<<DDB0) | (1<<DDB1) | (1<<DDB2) | (1<<DDB3) | (1<<DDB4) | (1<<DDB5);
     // Enable external interrupts
-    GIMSK |= (1<<INT1);
+    GIMSK |= (1<<INT1); 
     // Configure to be active with the raising edge of the signal
     MCUCR |= (1<<ISC10) | (1<<ISC11);
     // Start the LEDS in the LOW state
@@ -81,17 +81,21 @@ void temporizer()
 
 int main(void)
 {
-    setButtonsForLeds();
-    temporizer();
+    setButtonsForLeds(); // Call the I/O function
+    temporizer(); // Call the temporizer function
     while(1)
-    {
+    {   // Begin the state machine 
         switch(state)
         {
             case(BUTTON_IDLE):
-            PORTB = (1<<PB1) | (1<< PB4) | (1<<PB6);
+            // Activate the LEDS for the CARS (GREEN) and RED for the pedestrians
+            PORTB = (1<<PB1) | (1<< PB4) | (1<<PB6); 
+            // WAIT 10 seconds and wait for the button
             if(button_active & (half_second_counter >= 20))
-            {
+            {   
+                // Go to the next state
                 state = BLINK_CARS;
+                // Restart the counter
                 half_second_counter = 0;
                 counter = 0;
             }
@@ -102,8 +106,10 @@ int main(void)
             break;
 
             case(BLINK_CARS):
+            // Blink the Green LED 3 seconds
             if(half_second_counter == 6)
             {
+                // Same as before, continue to the next state and restart the counter
                 state = RED_LIGHT_CARS;
                 half_second_counter = 0;
                 counter = 0;
@@ -115,7 +121,9 @@ int main(void)
             break;
 
             case(RED_LIGHT_CARS):
+            // Turno off the green LED for the cars and turn the RED LED for the cars
             PORTB = (0<<PB1) | (1<< PB2) | (1<<PB4) | (1<<PB6);
+            // Wait 1 second
             if((half_second_counter  = 1))
             {
                 state = GREEN_LIGHT_PEDESTRIANS;
@@ -129,7 +137,9 @@ int main(void)
             break;
 
             case(GREEN_LIGHT_PEDESTRIANS):
+            // Turn On the LED for the pedestrians
             PORTB =  (1<<PB2) | (0<<PB4) | (0<<PB6) | (1<<PB3) | (1<<PB5); 
+            // Wait 10 seconds
             if(half_second_counter == 20)
             {
                 state = BLINK_PEDESTRIANS;
@@ -144,6 +154,7 @@ int main(void)
             break;
 
             case(BLINK_PEDESTRIANS):
+            // Make the LED for the pedestrians BLINK 3 seconds
             if(half_second_counter == 6)
             {
                 state = RED_LIGHT_PEDESTRIANS;
@@ -158,7 +169,9 @@ int main(void)
             break;
             
             case(RED_LIGHT_PEDESTRIANS):
+            // Turn back ON the RED LEDS for the pedestrians and turn OFF the green LED
             PORTB = (0<<PB1) | (1<<PB2) | (0<<PB3) | (0<<PB5) | (1<<PB4) | (1<<PB6);
+            // Wait 1 second and continue the machine
             if(half_second_counter == 1)
             {
                 state = BUTTON_IDLE;
